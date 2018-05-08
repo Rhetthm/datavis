@@ -1,0 +1,20 @@
+---
+title: "Math 335 test"
+author: "Rhett"
+date: "5/8/2018"
+output: html_document
+---
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+ggplot(data = mpg, mapping = aes( x = hwy, y = cty)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title = " Highway vs City Miles per Gallon", x = "Highway", y = "City")
+
+
+```
+

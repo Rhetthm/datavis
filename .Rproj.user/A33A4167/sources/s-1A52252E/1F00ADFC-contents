@@ -1,0 +1,243 @@
+#Graphical Perception article
+What is the scientific foundaton of graphical methods for data analysis?
+- Graphical perception: the visual decoding of information stored in the graphs
+- graphs should be constructed in such a way that people are able to extract as much quantitative information as possible
+- There isn't a lot of solid theory to back what makes a good graph, for most of thier recent history, it has been based on what "looks good"
+
+#Chapter 28
+
+library(tidyverse)
+
+ - Creating labels
+ 
+ ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) +
+  labs(title = "Fuel efficiency generally decreases with engine size")
+  
+  Labs(title = ...) adds a title to your graphic
+  
+- Titles should summarize the main findings of the plot and not just say what the plot is.
+
+to add more text to the title use the "subtitle" and "caption commands"
+
+like this
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Fuel efficiency generally decreases with engine size",
+    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
+    caption = "Data from fueleconomy.gov"
+  )
+  
+You can also add X and Y lables in the labs function
+
+like this
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(colour = class)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    x = "Engine displacement (L)",
+    y = "Highway fuel economy (mpg)",
+    colour = "Car type"
+  )
+  
+##Annotations
+- In addition to labeling the major components of the plots, we can also label individual observations or groups of observations with the geom_text() function.
+
+Here is an example of how it might work
+
+best_in_class <- mpg %>%
+  group_by(class) %>%
+  filter(row_number(desc(hwy)) == 1)
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(colour = class)) +
+  geom_text(aes(label = model), data = best_in_class)
+  
+  
+- The above plot is functional but hard to read. the function geom_label() places boxes around the label and separates them a little bit to make it easier to read.
+
+Here is an example of a geom_lebel
+
+ggplot(mpg, mapping= aes(displ, hwy)) +
+  geom_point(aes(colour = class)) +
+  geom_point(size = 3, shape = 1, data = best_in_class) +
+  ggrepel::geom_label_repel(aes(label = model), data = best_in_class)
+
+- The example below has the labels colored,and faded as well as the legend removed.
+
+class_avg <- mpg %>%
+  group_by(class) %>%
+  summarise(
+    displ = median(displ),
+    hwy = median(hwy)
+  )
+
+ggplot(mpg, aes(displ, hwy, colour = class)) +
+  ggrepel::geom_label_repel(aes(label = class),
+    data = class_avg,
+    size = 6,
+    label.size = 0,
+    segment.color = NA
+  ) +
+  geom_point() +
+  theme(legend.position = "none")
+  
+  - It just one label is wanted you can use the label command as mentioned before, but the geom_text() function allows you to control its location.
+  
+  label <- mpg %>%
+  summarise(
+    displ = max(displ),
+    
+Annotate function can also work
+
+p <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()
+p + annotate("text", x = 4, y = 25, label = "Some text")
+    hwy = max(hwy),
+    label = "Increasing engine size is \nrelated to decreasing fuel economy."
+  )
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  geom_text(aes(label = label), data = label, vjust = "top", hjust = "right")
+  
+  
+This code shows all the possible locations for placing a label
+
+  stringr::str_wrap(width = 40) %>%
+  writeLines()
+
+##Scales
+
+To control how frequently tic marks on the axis appear and if there is a break in your data use the breaks() function.
+
+as seen in this example which sets the y scale to go from 15 to 40 increasing by 5 each time.
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  scale_y_continuous(breaks = seq(15, 40, by = 5))
+
+also if you don't want to have numbers on the axis you can do something like this
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  scale_x_continuous(labels = NULL) +
+  scale_y_continuous(labels = NULL)
+  
+Breaks can also expand each line. In the below example the chart shows exactly when each president stated and started.
+
+presidential %>%
+  mutate(id = 33 + row_number()) %>%
+  ggplot(aes(start, id)) +
+    geom_point() +
+    geom_segment(aes(xend = end, yend = id)) +
+    scale_x_date(NULL, breaks = presidential$start, date_labels = "'%y")
+    
+To manipulate the legend position use the following commands
+
+
+ base <- ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(colour = class))
+
+base + theme(legend.position = "left")
+base + theme(legend.position = "top")
+base + theme(legend.position = "bottom")
+base + theme(legend.position = "right") # the default
+
+legend guide(), and guide_colourbar change the type of legend.
+
+Remember that if you are placing many different points, it is important to have a low alpha.
+
+When preforming it is better for preform it on the scale itself, instead of the variable. This gives the same visual output as if we transformed the variable, but it keeps the kept in the original units.
+
+Here is that example
+
+ggplot(diamonds, aes(carat, price)) +
+  geom_bin2d() + 
+  scale_x_log10() + 
+  scale_y_log10()
+
+###Changing colors
+
+normally when you select the color = "variable" ggplot selects colors that are equally spaced on the color wheel, which is often fine. To chang this you can use the colour_brewer function. It uses colors that are better for people with many types of color blindness.
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = drv))
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = drv)) +
+  scale_colour_brewer(palette = "Set1")
+  
+You can also change the shapes, which makes sure that the plot can be interpreted in black and white
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(aes(color = drv, shape = drv)) +
+  scale_colour_brewer(palette = "Set1")
+  
+all the color brewer scales can be found at http://colorbrewer2.org/
+
+To manually change colors do as follows
+
+presidential %>%
+  mutate(id = 33 + row_number()) %>%
+  ggplot(aes(start, id, colour = party)) +
+    geom_point() +
+    geom_segment(aes(xend = end, yend = id)) +
+    scale_colour_manual(values = c(Republican = "red", Democratic = "blue"))
+    
+##Zooming
+
+There are 3 ways to control plot limits
+
+1.Adjusting what data are plotted
+2.Setting the limits in each scale
+3.Setting xlim and ylim in coord_cartesian()
+
+
+One way to expand limits is to use the following code
+
+x_scale <- scale_x_continuous(limits = range(mpg$displ))
+y_scale <- scale_y_continuous(limits = range(mpg$hwy))
+col_scale <- scale_colour_discrete(limits = unique(mpg$drv))
+
+ggplot(suv, aes(displ, hwy, colour = drv)) +
+  geom_point() +
+  x_scale +
+  y_scale +
+  col_scale
+
+ggplot(compact, aes(displ, hwy, colour = drv)) +
+  geom_point() +
+  x_scale +
+  y_scale +
+  col_scale
+  
+###Themes
+
+8 standard themes additional found at https://github.com/jrnold/ggthemes in the gg themes package
+
+###saving plots
+
+use ggsave("my-plot.pdf") to save your most recent image. It may be important to specify the width and height
+
+###figure sizing
+
+to force all your graphics to have the same width use
+
+fig.width = 6 and fig.asp = 0.618 ( the golden ratio)
+the in individual chunks just adjust fig.asp
+
+output size can be controlled with out.width and fig.align = "center"
+
+
+
+
+
+
+
+
+

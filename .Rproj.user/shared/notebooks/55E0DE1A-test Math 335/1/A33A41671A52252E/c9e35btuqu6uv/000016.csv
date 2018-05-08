@@ -1,0 +1,4 @@
+"0","ggplot(data = mpg, mapping = aes( x = hwy, y = cty)) +"
+"0","  geom_point() +"
+"0","  geom_smooth() +"
+"0","  labs(title = "" Highway vs City Miles per Gallon"", x = ""Highway"", y = ""City"")"
