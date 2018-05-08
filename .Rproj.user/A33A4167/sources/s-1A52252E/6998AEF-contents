@@ -1,0 +1,37 @@
+---
+title: "Task 5 Analysis"
+author: "Rhett"
+date: "5/8/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+head(diamonds)
+```
+
+#Plot 1 - Accurate but Poorly built to communicate
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+#Plot 2 - acurate and optimizes data communication
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+These are two of the examples of graphs taken from the book. the first exampls is technically acurate, but is poorly built to communicate the data. the lack of a common baseline makes it very difficult to compare the groups. The order the the clarity variable is done is done in way that doesn't seem to make much sense. The authors the the artical on graphical perception specifically mentioned that stacked bar graphs shouldn't be used because they can almost always be presented wth a common baseline.  This commom baseline with the dodged format allows us to better how clarity of diamonds is distributed amongst the various cuts. It is much easier to understand the overall pattern in plot 2 and which clarities are considered to be "Ideal"
+

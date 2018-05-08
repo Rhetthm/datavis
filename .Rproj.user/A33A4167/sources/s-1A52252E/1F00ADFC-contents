@@ -4,6 +4,18 @@ What is the scientific foundaton of graphical methods for data analysis?
 - graphs should be constructed in such a way that people are able to extract as much quantitative information as possible
 - There isn't a lot of solid theory to back what makes a good graph, for most of thier recent history, it has been based on what "looks good"
 
+- depending on the type of task, different primary elementary tasks are involved to get out the relative information.
+
+- catesian graph, paired values of X and Y are explained on two plots. Plots X and Y separately, allows us to see the differences between X and Y. 
+
+- tripple scatterplots. or a bubble plot. plots X and y as points in the center of a circle, then adds area of the circle for the third variable of Z.
+
+- purpose of the graph is not to protray numbers with as many decimal places as possible. Dot charts and bar charts act as replacements for divided bar charts and pie charts
+
+- divided bar charts and pie charts can always be represented on a common scale.
+
+
+
 #Chapter 28
 
 library(tidyverse)
